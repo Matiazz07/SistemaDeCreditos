@@ -27,3 +27,39 @@ function guardarTasa() {
   }
 }
 
+function guardarCliente() {
+  let cedula = recuperarTexto("cedula");
+  let nombre = recuperarTexto("nombre");
+  let apellido = recuperarTexto("apellido");
+  let ingresos = recuperarFloat("ingresos");
+  let egresos = recuperarFloat("egresos");
+  let cliente = {
+    cedula: cedula,
+    nombre: nombre,
+    apellido: apellido,
+    ingresos: ingresos,
+    egresos: egresos
+  };
+  clientes.push(cliente);
+  pintarClientes();
+}
+
+function pintarClientes() {
+  let tabla = document.getElementById("tablaClientes");
+  tabla.innerHTML = "";
+  for (let i = 0; i < clientes.length; i++) {
+    let cliente = clientes[i];
+    tabla.innerHTML += "<tr>" +
+      "<td>" + cliente.cedula + "</td>" +
+      "<td>" + cliente.nombre + "</td>" +
+      "<td>" + cliente.apellido + "</td>" +
+      "<td>" + cliente.ingresos + "</td>" +
+      "<td>" + cliente.egresos + "</td>" +
+      "<td><button onclick='actualizarCliente(" + cliente.cedula + ")'>Actualizar</button>" +
+      "<button onclick='eliminarCliente(" + cliente.cedula + ")'>Eliminar</button></td>" +
+      "</tr>"
+  }
+}
+
+
+
