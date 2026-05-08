@@ -10,6 +10,7 @@ let creditoAprobado = false;
 function ocultarSeccion() {
   document.getElementById("parametros").classList.remove("activa");
   document.getElementById("clientes").classList.remove("activa");
+  document.getElementById("credito").classList.remove("activa");
 }
 
 function mostrarSeccion(id) {
@@ -107,5 +108,83 @@ function limpiar() {
   mostrarTextoEnCaja("egresos", "");
 }
 
+function buscarClienteCredito() {
+  let cedula = recuperarTexto("buscarCedulaCredito");
+  let cliente = buscarCliente(cedula);
+  if (cliente != null) {
+    clienteSeleccionado = cliente;
+    let cmpClienteCredito = document.getElementById("datosClienteCredito");
+    cmpClienteCredito.innerHTML =
+      "Cédula: " + cliente.cedula + "<br>" +
+      "Nombre: " + cliente.nombre + "<br>" +
+      "Apellido: " + cliente.apellido + "<br>" +
+      "Ingresos: " + cliente.ingresos + "<br>" +
+      "Egresos: " + cliente.egresos;
+  } else {
+    mostrarTexto("estadoCliente", "Cliente no encontrado");
+  }
+}
 
+function calcularDisponible(ingresos, arriendo, alimentacion, varios) {
+  let valorDisponible;
+  valorDisponible = ingresos - (arriendo + alimentacion + varios);
+  if (valorDisponible < 0) {
+    return "0";
+  }
+  return valorDisponible;
+}
 
+function calcularCapacidadPago(montoDisponible) {
+  return montoDisponible * 0.5;
+}
+
+function calcularInteresSimple(monto, tasa, plazo) {
+  let interesAPagar;
+  interesAPagar = plazo * (tasa / 100) * monto;
+  return interesAPagar;
+}
+
+function calcularTotalPagar(monto, interes) {
+  let totalAPagar;
+  totalAPagar = monto + interes + 100;
+  return totalAPagar;
+}
+
+function calcularCuotaMensual(total, plazoAnios) {
+  let totalCuotaMensual;
+  totalCuotaMensual = total / (plazoAnios * 12);
+  return totalCuotaMensual.toFixed(2);
+}
+
+function aprobarCredito(capacidadPago, cuotaMensual) {
+  if (capacidadPago > cuotaMensual) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+simularCredito = function () {
+  let monto = document.getElementById("montoCredito").value;
+  let floatMonto = parseFloat(monto);
+  let plazo = document.getElementById("plazoCredito").value;
+  let intPlazo = parseInt(plazo);
+  let disponible = calcularDisponible(clienteSeleccionado.ingresos, clienteSeleccionado.egresos, 0, 0);
+  let capacidadPago = calcularCapacidadPago(disponible);
+  let interes = calcularInteresSimple(floatMonto, tasaInteres, intPlazo);
+  let totalPagar = calcularTotalPagar(floatMonto, interes);
+  let cuota = calcularCuotaMensual(totalPagar, intPlazo);
+  let aprobado = aprobarCredito(capacidadPago, cuota);
+  let veredicto = aprobado ? "Crédito disponible" : "El monto exede la capacidad de pago";
+  let divResultado = document.getElementById("resultadoCredito")
+  divResultado.innerHTML =
+    "Capacidad de pago:" + capacidadPago + "<br>" +
+    "Total a Pagar: " + totalPagar + "<br>" +
+    "Cuota mensual: " + cuota + "<br>" +
+    "RESULTADO: " + veredicto;
+  divResultado.className = aprobado ? "aprobado" : "rechazado"
+  document.getElementById("btnSolicitarCredito").disabled = !aprobado;
+  montoCalculado = disponible;
+  plazoCalculado = plazo;
+  cuotaCalculada = cuota;
+}
