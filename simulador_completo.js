@@ -33,15 +33,24 @@ function guardarCliente() {
   let apellido = recuperarTexto("apellido");
   let ingresos = recuperarFloat("ingresos");
   let egresos = recuperarFloat("egresos");
-  let cliente = {
-    cedula: cedula,
-    nombre: nombre,
-    apellido: apellido,
-    ingresos: ingresos,
-    egresos: egresos
-  };
-  clientes.push(cliente);
-  pintarClientes();
+  let clienteExiste = buscarCliente(cedula);
+  if (clienteExiste == null) {
+    let cliente = {
+      cedula: cedula,
+      nombre: nombre,
+      apellido: apellido,
+      ingresos: ingresos,
+      egresos: egresos
+    };
+    clientes.push(cliente);
+    pintarClientes();
+  } else {
+    clienteExiste.nombre = nombre;
+    clienteExiste.apellido = apellido;
+    clienteExiste.ingresos = ingresos;
+    clienteExiste.egresos = egresos;
+    pintarClientes();
+  }
 }
 
 function pintarClientes() {
@@ -55,10 +64,47 @@ function pintarClientes() {
       "<td>" + cliente.apellido + "</td>" +
       "<td>" + cliente.ingresos + "</td>" +
       "<td>" + cliente.egresos + "</td>" +
-      "<td><button onclick='actualizarCliente(" + cliente.cedula + ")'>Actualizar</button>" +
+      "<td><button onclick='seleccionarCliente(" + cliente.cedula + ")'>Actualizar</button>" +
       "<button onclick='eliminarCliente(" + cliente.cedula + ")'>Eliminar</button></td>" +
       "</tr>"
   }
+}
+
+function buscarCliente(cedula) {
+  for (let i = 0; i < clientes.length; i++) {
+    if (clientes[i].cedula == cedula) {
+      return clientes[i];
+    }
+  }
+  return null;
+}
+
+function seleccionarCliente(cedula) {
+  clienteSeleccionado = buscarCliente(cedula);
+  mostrarTextoEnCaja("cedula", clienteSeleccionado.cedula);
+  mostrarTextoEnCaja("nombre", clienteSeleccionado.nombre);
+  mostrarTextoEnCaja("apellido", clienteSeleccionado.apellido);
+  mostrarTextoEnCaja("ingresos", clienteSeleccionado.ingresos);
+  mostrarTextoEnCaja("egresos", clienteSeleccionado.egresos);
+}
+
+function eliminarCliente(cedula) {
+  for (let i = 0; i < clientes.length; i++) {
+    if (clientes[i].cedula == cedula) {
+      clientes.splice(i, 1);
+      pintarClientes();
+      break;
+    }
+  }
+  limpiar();
+}
+
+function limpiar() {
+  mostrarTextoEnCaja("cedula", "");
+  mostrarTextoEnCaja("nombre", "");
+  mostrarTextoEnCaja("apellido", "");
+  mostrarTextoEnCaja("ingresos", "");
+  mostrarTextoEnCaja("egresos", "");
 }
 
 
