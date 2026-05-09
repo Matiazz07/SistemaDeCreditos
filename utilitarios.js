@@ -33,3 +33,7 @@ function mostrarImagen(idComponente, rutaImagen) {
     componente.src = rutaImagen;
 
 }
+
+function recuperarElemento(idComponente) {
+    return document.getElementById(idComponente);
+}

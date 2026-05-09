@@ -11,6 +11,7 @@ function ocultarSeccion() {
   document.getElementById("parametros").classList.remove("activa");
   document.getElementById("clientes").classList.remove("activa");
   document.getElementById("credito").classList.remove("activa");
+  document.getElementById("listaCreditos").classList.remove("activa");
 }
 
 function mostrarSeccion(id) {
@@ -188,3 +189,63 @@ simularCredito = function () {
   plazoCalculado = plazo;
   cuotaCalculada = cuota;
 }
+
+solicitarCredito = function () {
+  let credito = {
+    cedula: clienteSeleccionado.cedula,
+    nombre: clienteSeleccionado.nombre,
+    apellido: clienteSeleccionado.apellido,
+    monto: montoCalculado,
+    tasa: tasaInteres,
+    plazo: plazoCalculado,
+    cuota: cuotaCalculada
+  }
+  creditos.push(credito);
+}
+
+function buscarCreditos(cedula) {
+  let creditosCliente = [];
+  for (let i = 0; i < creditos.length; i++) {
+    let credito = creditos[i];
+    if (credito.cedula == cedula) {
+      creditosCliente.push(credito)
+    }
+  }
+  return creditosCliente;
+}
+
+function pintarCreditos(creditos) {
+  let tabla = recuperarElemento("tablaCreditos");
+  let contenido = "";
+  for (let i = 0; i < creditos.length; i++) {
+    let credito = creditos[i];
+    contenido += `<tr>
+          <td>${credito.cedula}</td>
+          <td>${credito.nombre}</td>
+          <td>${credito.apellido}</td>
+          <td>${credito.monto}</td>
+          <td>${credito.tasa}</td>
+          <td>${credito.plazo}</td>
+          <td>${credito.cuota}</td>
+          <td><button onclick = "eliminarCredito(${credito.cedula})">Eliminar</button></td>
+        </tr>`
+  }
+  tabla.innerHTML = contenido;
+}
+
+buscarCreditosCliente = function () {
+  let campoCliente = recuperarTexto("buscarCedulaListado");
+  let creditosCliente = buscarCreditos(campoCliente);
+  pintarCreditos(creditosCliente);
+}
+
+function eliminarCredito(cedula) {
+  for (let i = 0; i < creditos.length; i++) {
+    if (creditos[i].cedula == cedula) {
+      creditos.splice(i, 1);
+      break;
+    }
+  }
+  pintarCreditos(creditos);
+}
+
